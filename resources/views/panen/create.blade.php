@@ -1,0 +1,82 @@
+<x-sipadi-layout title="Tambah Data Panen">
+
+<div class="card" style="max-width: 600px; margin: 0 auto;">
+    <div class="card-header">
+        <h2 class="card-title">Form Pencatatan Hasil Panen</h2>
+    </div>
+
+    <!-- Pilihan Petani (Langkah 1) -->
+    <form method="GET" action="{{ route('panen.create') }}" style="margin-bottom: 24px; padding-bottom: 24px; border-bottom: 1px solid var(--color-border);">
+        <label style="display: block; font-size: 13px; font-weight: 600; margin-bottom: 8px;">Pilih Petani</label>
+        <div style="display: flex; gap: 10px;">
+            <select name="id_petani" style="flex: 1; padding: 10px 14px; border: 1.5px solid var(--color-border); border-radius: var(--radius-md); font-family: inherit; font-size: 14px; background: #fff;">
+                <option value="">-- Pilih Petani --</option>
+                @foreach($petanis as $p)
+                    <option value="{{ $p->id }}" {{ (request('id_petani') == $p->id) ? 'selected' : '' }}>
+                        {{ $p->nama_petani }} (Lahan: {{ $p->luas_lahan }} tbk)
+                    </option>
+                @endforeach
+            </select>
+            <button type="submit" style="padding: 10px 16px; background: var(--color-bg); color: var(--color-text); border: 1px solid var(--color-border); border-radius: var(--radius-md); font-size: 14px; font-weight: 600; cursor: pointer;">Cek Referensi</button>
+        </div>
+    </form>
+
+    <!-- Form Input (Langkah 2) -->
+    @if($selectedPetani)
+    <form method="POST" action="{{ route('panen.store') }}">
+        @csrf
+        <input type="hidden" name="id_petani" value="{{ $selectedPetani->id }}">
+
+        @if($bibitRef)
+        <div style="background: #F0F7F4; border: 1px dashed var(--color-primary-lt); padding: 16px; border-radius: var(--radius-md); margin-bottom: 20px;">
+            <div style="font-size: 12px; font-weight: 700; color: var(--color-primary); text-transform: uppercase; margin-bottom: 8px;">Referensi Alokasi Bibit Terakhir</div>
+            <div style="font-size: 14px; color: var(--color-text);">
+                <strong>Musim:</strong> {{ $bibitRef->musim_tanam }} <br>
+                <strong>Jumlah Bibit:</strong> {{ $bibitRef->jumlah_bibit }} pack
+            </div>
+        </div>
+        @else
+        <div style="background: #FEF0EF; border: 1px dashed #F5B7B1; padding: 16px; border-radius: var(--radius-md); margin-bottom: 20px;">
+            <div style="font-size: 14px; color: var(--color-danger);">
+                Petani ini belum memiliki data referensi alokasi bibit.
+            </div>
+        </div>
+        @endif
+
+        <div style="margin-bottom: 20px;">
+            <label style="display: block; font-size: 13px; font-weight: 600; margin-bottom: 8px;">Musim Tanam</label>
+            <input type="text" name="musim_tanam" value="{{ old('musim_tanam', $bibitRef ? $bibitRef->musim_tanam : '') }}" required placeholder="Contoh: 2024-Ganjil"
+                   style="width: 100%; padding: 10px 14px; border: 1.5px solid var(--color-border); border-radius: var(--radius-md); font-family: inherit; font-size: 14px;">
+            @error('musim_tanam') <span style="color: var(--color-danger); font-size: 12px; margin-top: 4px; display: block;">{{ $message }}</span> @enderror
+        </div>
+
+        <div style="margin-bottom: 20px;">
+            <label style="display: block; font-size: 13px; font-weight: 600; margin-bottom: 8px;">Total Panen (kg)</label>
+            <input type="number" step="0.1" name="total_panen" value="{{ old('total_panen') }}" required
+                   style="width: 100%; padding: 10px 14px; border: 1.5px solid {{ session('error') ? 'var(--color-danger)' : 'var(--color-border)' }}; border-radius: var(--radius-md); font-family: inherit; font-size: 14px;">
+            @error('total_panen') <span style="color: var(--color-danger); font-size: 12px; margin-top: 4px; display: block;">{{ $message }}</span> @enderror
+        </div>
+
+        @if(session('error'))
+        <div style="margin-bottom: 20px; background: #FEF9EE; border: 1px solid #FAD7A1; padding: 12px; border-radius: var(--radius-md);">
+            <label style="display: flex; align-items: center; gap: 8px; font-size: 13.5px; font-weight: 600; color: var(--color-warning); cursor: pointer;">
+                <input type="checkbox" name="confirm_anomaly" value="1" style="width: 16px; height: 16px;">
+                Saya mengkonfirmasi bahwa data panen ini sudah benar.
+            </label>
+        </div>
+        @endif
+
+        <div style="display: flex; gap: 12px; justify-content: flex-end;">
+            <a href="{{ route('panen.index') }}" style="padding: 10px 16px; background: var(--color-bg); color: var(--color-text); border: 1px solid var(--color-border); border-radius: var(--radius-md); font-size: 14px; font-weight: 600; text-decoration: none;">Batal</a>
+            <button type="submit" style="padding: 10px 16px; background: var(--color-primary); color: black; border: none; border-radius: var(--radius-md); font-size: 14px; font-weight: 600; cursor: pointer;">Simpan Data Panen</button>
+        </div>
+    </form>
+    @else
+        <div style="text-align: center; color: var(--color-muted); padding: 20px 0;">
+            <i class="ph-bold ph-arrow-up" style="font-size: 24px; margin-bottom: 10px; display: block;"></i>
+            Silakan pilih petani terlebih dahulu.
+        </div>
+    @endif
+</div>
+
+</x-sipadi-layout>
