@@ -10,13 +10,46 @@ use App\Http\Controllers\KeuanganController;
 use App\Http\Controllers\BagiHasilController;
 use App\Http\Controllers\LaporanController;
 use App\Http\Controllers\PenggunaController;
+use App\Http\Controllers\TokoController;
+use App\Http\Controllers\PelangganAuthController;
 
 /*
 |--------------------------------------------------------------------------
-| Autentikasi (publik)
+| Landing Page & Toko (Publik)
 |--------------------------------------------------------------------------
 */
-Route::get('/', [AutentikasiController::class, 'showLogin'])->name('autentikasi.showLogin');
+Route::get('/', [TokoController::class, 'index'])->name('toko');
+Route::post('/cart/add', [TokoController::class, 'addToCart'])->name('cart.add');
+Route::post('/cart/remove', [TokoController::class, 'removeFromCart'])->name('cart.remove');
+Route::post('/cart/update', [TokoController::class, 'updateCart'])->name('cart.update');
+
+/*
+|--------------------------------------------------------------------------
+| Autentikasi Pelanggan
+|--------------------------------------------------------------------------
+*/
+Route::get('/masuk', [PelangganAuthController::class, 'showLogin'])->name('pelanggan.login');
+Route::post('/masuk', [PelangganAuthController::class, 'login'])->name('pelanggan.login.post');
+Route::get('/daftar', [PelangganAuthController::class, 'showRegister'])->name('pelanggan.register');
+Route::post('/daftar', [PelangganAuthController::class, 'register'])->name('pelanggan.register.post');
+Route::post('/pelanggan/logout', [PelangganAuthController::class, 'logout'])->name('pelanggan.logout');
+
+/*
+|--------------------------------------------------------------------------
+| Area Pelanggan — wajib login pelanggan
+|--------------------------------------------------------------------------
+*/
+Route::middleware('pelanggan.auth')->group(function () {
+    Route::get('/checkout', [TokoController::class, 'checkout'])->name('toko.checkout');
+    Route::post('/checkout', [TokoController::class, 'processCheckout'])->name('toko.checkout.process');
+    Route::get('/pesanan-saya', [TokoController::class, 'pesanan'])->name('toko.pesanan');
+});
+
+/*
+|--------------------------------------------------------------------------
+| Autentikasi Internal (Staf & Ketua)
+|--------------------------------------------------------------------------
+*/
 Route::get('/login', [AutentikasiController::class, 'showLogin'])->name('login');
 Route::post('/login', [AutentikasiController::class, 'login'])->name('autentikasi.login');
 Route::post('/logout', [AutentikasiController::class, 'logout'])->name('autentikasi.logout');

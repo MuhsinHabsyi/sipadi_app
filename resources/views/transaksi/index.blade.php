@@ -20,9 +20,6 @@
     <div class="card">
         <div class="card-header">
             <h2 class="card-title">Daftar Pesanan & Transaksi</h2>
-            <a href="{{ route('transaksi.create') }}" style="background: var(--color-primary); color: black; padding: 8px 16px; border-radius: var(--radius-md); text-decoration: none; font-size: 13.5px; font-weight: 600; display: inline-flex; align-items: center; gap: 6px;">
-                <i class="ph-bold ph-plus"></i> Tambah Data Baru
-            </a>
         </div>
 
         <table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
@@ -30,8 +27,11 @@
                 <tr style="border-bottom: 2px solid var(--color-border);">
                     <th style="padding: 12px; text-align: left; font-size: 13px; color: var(--color-muted);">ID</th>
                     <th style="padding: 12px; text-align: left; font-size: 13px; color: var(--color-muted);">Pelanggan</th>
+                    <th style="padding: 12px; text-align: left; font-size: 13px; color: var(--color-muted);">Produk</th>
                     <th style="padding: 12px; text-align: left; font-size: 13px; color: var(--color-muted);">Tanggal</th>
                     <th style="padding: 12px; text-align: left; font-size: 13px; color: var(--color-muted);">Jumlah</th>
+                    <th style="padding: 12px; text-align: right; font-size: 13px; color: var(--color-muted);">Total</th>
+                    <th style="padding: 12px; text-align: center; font-size: 13px; color: var(--color-muted);">Bukti</th>
                     <th style="padding: 12px; text-align: center; font-size: 13px; color: var(--color-muted);">Status</th>
                     <th style="padding: 12px; text-align: right; font-size: 13px; color: var(--color-muted);">Aksi</th>
                 </tr>
@@ -41,8 +41,19 @@
                 <tr style="border-bottom: 1px solid var(--color-border); transition: background .2s;">
                     <td style="padding: 12px; font-size: 14px; color: var(--color-text);">#{{ $t->id }}</td>
                     <td style="padding: 12px; font-size: 14px; font-weight: 600; color: var(--color-text);">{{ $t->pelanggan->nama ?? 'Tidak diketahui' }}</td>
+                    <td style="padding: 12px; font-size: 13px; color: var(--color-text);">{{ $t->jenis_beras ?? '-' }}</td>
                     <td style="padding: 12px; font-size: 14px; color: var(--color-text);">{{ \Carbon\Carbon::parse($t->tanggal_pesanan)->format('d M Y') }}</td>
                     <td style="padding: 12px; font-size: 14px; font-weight: 600; color: var(--color-text);">{{ number_format($t->jumlah_pesanan, 0, ',', '.') }} kg</td>
+                    <td style="padding: 12px; text-align: right; font-size: 14px; font-weight: 600; color: var(--color-primary);">Rp {{ number_format($t->total_harga ?? 0, 0, ',', '.') }}</td>
+                    <td style="padding: 12px; text-align: center;">
+                        @if($t->bukti_transfer)
+                            <a href="{{ asset('storage/' . $t->bukti_transfer) }}" target="_blank" style="display: inline-flex; align-items: center; justify-content: center; width: 32px; height: 32px; border-radius: 8px; background: #EBF5FB; color: #2980B9; text-decoration: none;" title="Lihat Bukti Transfer">
+                                <i class="ph-bold ph-image"></i>
+                            </a>
+                        @else
+                            <span style="color: var(--color-muted); font-size: 12px;">-</span>
+                        @endif
+                    </td>
                     <td style="padding: 12px; text-align: center;">
                         @if($t->status_pesanan === 'Selesai')
                             <span style="display: inline-block; padding: 4px 10px; border-radius: 20px; font-size: 11.5px; font-weight: 600; background: #E8F5EE; color: var(--color-primary);">Selesai</span>
@@ -75,7 +86,7 @@
                 </tr>
                 @empty
                 <tr>
-                    <td colspan="6" style="padding: 40px; text-align: center; color: var(--color-muted);">
+                    <td colspan="9" style="padding: 40px; text-align: center; color: var(--color-muted);">
                         <i class="ph-bold ph-shopping-cart" style="font-size: 32px; display: block; margin-bottom: 10px; opacity: 0.5;"></i>
                         Belum ada transaksi.
                     </td>

@@ -11,8 +11,12 @@ class Transaksi extends Model
 
     protected $fillable = [
         'id_pelanggan',
+        'jenis_beras',
+        'harga_satuan',
         'tanggal_pesanan',
         'jumlah_pesanan',
+        'total_harga',
+        'bukti_transfer',
         'status_pesanan',
     ];
 

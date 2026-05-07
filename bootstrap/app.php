@@ -13,6 +13,7 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->alias([
             'pengguna.auth' => \App\Http\Middleware\PenggunaAuth::class,
+            'pelanggan.auth' => \App\Http\Middleware\PelangganAuth::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

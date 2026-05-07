@@ -11,8 +11,15 @@ class Pelanggan extends Model
 
     protected $fillable = [
         'nama',
+        'email',
+        'password',
         'kontak',
+        'telepon',
         'alamat',
+    ];
+
+    protected $hidden = [
+        'password',
     ];
 
     public function transaksis(): HasMany

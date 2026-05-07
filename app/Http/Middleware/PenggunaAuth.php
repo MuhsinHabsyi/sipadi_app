@@ -14,7 +14,7 @@ class PenggunaAuth
     public function handle(Request $request, Closure $next, string ...$roles): Response
     {
         if (! session()->has('pengguna_id')) {
-            return redirect()->route('autentikasi.showLogin')
+            return redirect()->route('login')
                 ->with('error', 'Silakan masuk terlebih dahulu.');
         }
 

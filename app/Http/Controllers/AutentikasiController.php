@@ -55,6 +55,6 @@ class AutentikasiController extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return redirect()->route('autentikasi.showLogin');
+        return redirect()->route('login');
     }
 }
